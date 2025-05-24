@@ -13,7 +13,6 @@ try:
 except ImportError:
     selenium_installed = False
 
-
 class ProxyBrowserApp:
     def __init__(self, root):
         self.root = root
@@ -111,11 +110,9 @@ class ProxyBrowserApp:
         self.lang = lang_code
         self.root.title(self.texts[self.lang]["app_title"])
         
-        # Sekme başlıklarını güncelle
         self.notebook.tab(self.proxy_tab, text=self.texts[self.lang]["proxy_settings"])
         self.notebook.tab(self.performance_tab, text=self.texts[self.lang]["performance_settings"])
 
-        # Label ve Button metinlerini güncelle
         self.proxy_address_label.config(text=self.texts[self.lang]["proxy_address"])
         self.proxy_type_label.config(text=self.texts[self.lang]["proxy_type"])
         self.username_label.config(text=self.texts[self.lang]["username_ops"])
@@ -132,7 +129,6 @@ class ProxyBrowserApp:
         self.status_label.config(text=self.texts[self.lang]["status_waiting"])
 
     def show_install_screen(self):
-        # Ana widget'ları gizle
         for widget in self.root.winfo_children():
             widget.destroy()
 
@@ -145,12 +141,11 @@ class ProxyBrowserApp:
         self.progress_bar = ttk.Progressbar(self.root, orient="horizontal", length=200, mode="indeterminate")
         self.progress_bar.pack(pady=10)
 
-        self.root.update_idletasks() # UI'ın hemen güncellenmesini sağla
+        self.root.update_idletasks()
 
         self.install_animation_running = True
         self.animate_installation()
 
-        # Ayrı bir thread'de kurulumu başlat
         install_thread = threading.Thread(target=self.install_selenium_library)
         install_thread.daemon = True
         install_thread.start()
@@ -165,18 +160,17 @@ class ProxyBrowserApp:
         
         self.install_label.config(text=f"{self.texts[self.lang]['install_anim_dot']}{dots}")
         self.install_animation_idx = (self.install_animation_idx + 1) % 4
-        self.root.after(500, self.animate_installation) # Her 500ms'de bir güncelle
+        self.root.after(500, self.animate_installation)
 
     def install_selenium_library(self):
         self.progress_bar.start()
         try:
-            # pip'i subprocess ile çalıştır
             subprocess.check_call([sys.executable, "-m", "pip", "install", "selenium"])
             messagebox.showinfo(self.texts[self.lang]["success_title"], self.texts[self.lang]["install_complete_restart"])
             self.restart_application()
         except subprocess.CalledProcessError as e:
             messagebox.showerror(self.texts[self.lang]["error_title"], self.texts[self.lang]["install_pip_error"])
-            self.root.quit() # Hata durumunda uygulamayı kapat
+            self.root.quit()
         except Exception as e:
             messagebox.showerror(self.texts[self.lang]["error_title"], f"{self.texts[self.lang]['install_failed_exit']}\n{e}")
             self.root.quit()
@@ -189,14 +183,12 @@ class ProxyBrowserApp:
         os.execl(python, python, *sys.argv)
 
     def create_main_widgets(self):
-        # Mevcut widget'ları temizle (eğer kurulum ekranından geliyorsa)
         for widget in self.root.winfo_children():
             widget.destroy()
 
         self.root.geometry("480x420")
         self.root.title(self.texts[self.lang]["app_title"])
 
-        # Dil Seçenekleri Menüsü
         self.menubar = tk.Menu(self.root)
         self.root.config(menu=self.menubar)
 
@@ -214,7 +206,6 @@ class ProxyBrowserApp:
         self.performance_tab = ttk.Frame(self.notebook, padding="10")
         self.notebook.add(self.performance_tab, text=self.texts[self.lang]["performance_settings"])
 
-        # Proxy Ayarları İçeriği
         self.proxy_address_label = ttk.Label(self.proxy_tab, text=self.texts[self.lang]["proxy_address"])
         self.proxy_address_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
         self.proxy_address_entry = ttk.Entry(self.proxy_tab, width=35)
@@ -241,12 +232,12 @@ class ProxyBrowserApp:
 
         self.proxy_tab.grid_columnconfigure(1, weight=1)
 
-        # Hızlandırma Ayarları İçeriği
-        self.headless_var = tk.BooleanVar(value=True)
+        # Hızlandırma Ayarları İçeriği - Varsayılanlar False olarak ayarlandı
+        self.headless_var = tk.BooleanVar(value=False)
         self.headless_checkbox = ttk.Checkbutton(self.performance_tab, text=self.texts[self.lang]["headless_mode"], variable=self.headless_var)
         self.headless_checkbox.grid(row=0, column=0, columnspan=2, sticky="w", padx=5, pady=5)
 
-        self.no_images_var = tk.BooleanVar(value=True)
+        self.no_images_var = tk.BooleanVar(value=False)
         self.no_images_checkbox = ttk.Checkbutton(self.performance_tab, text=self.texts[self.lang]["no_images"], variable=self.no_images_var)
         self.no_images_checkbox.grid(row=1, column=0, columnspan=2, sticky="w", padx=5, pady=5)
 
@@ -254,11 +245,10 @@ class ProxyBrowserApp:
         self.no_js_checkbox = ttk.Checkbutton(self.performance_tab, text=self.texts[self.lang]["disable_js"], variable=self.no_js_var)
         self.no_js_checkbox.grid(row=2, column=0, columnspan=2, sticky="w", padx=5, pady=5)
         
-        self.ignore_cert_errors_var = tk.BooleanVar(value=True)
+        self.ignore_cert_errors_var = tk.BooleanVar(value=False)
         self.ignore_cert_errors_checkbox = ttk.Checkbutton(self.performance_tab, text=self.texts[self.lang]["ignore_cert_errors"], variable=self.ignore_cert_errors_var)
         self.ignore_cert_errors_checkbox.grid(row=3, column=0, columnspan=2, sticky="w", padx=5, pady=5)
 
-        # Kontrol Butonları
         self.button_frame = ttk.Frame(self.root, padding="10")
         self.button_frame.pack(pady=5)
 
@@ -268,7 +258,6 @@ class ProxyBrowserApp:
         self.stop_button = ttk.Button(self.button_frame, text=self.texts[self.lang]["stop_browser"], command=self.stop_browser_thread, state=tk.DISABLED)
         self.stop_button.grid(row=0, column=1, padx=5)
 
-        # Durum Çubuğu
         self.status_label = ttk.Label(self.root, text=self.texts[self.lang]["status_waiting"], relief=tk.SUNKEN, anchor="w")
         self.status_label.pack(side="bottom", fill="x", ipady=2)
 
