@@ -6,7 +6,6 @@ import threading
 import time
 import os
 
-# Selenium kütüphanesinin yüklü olup olmadığını kontrol et
 try:
     from selenium import webdriver
     from selenium.webdriver.chrome.options import Options
@@ -14,8 +13,6 @@ try:
 except ImportError:
     selenium_installed = False
 
-# Lisans notu
-# Bu yazılım Shigeruya'ya aittir.
 
 class ProxyBrowserApp:
     def __init__(self, root):
@@ -25,11 +22,11 @@ class ProxyBrowserApp:
         self.root.resizable(False, False)
 
         self.driver = None
-        self.lang = "tr"  # Varsayılan dil: Türkçe
+        self.lang = "en"
 
         self.texts = {
             "tr": {
-                "app_title": "Proxy Tarayıcı",
+                "app_title": "Proxy Tarayıcı (shigeru tarafından)",
                 "proxy_settings": "Proxy Ayarları",
                 "proxy_address": "Proxy Adresi (IP:Port):",
                 "proxy_type": "Proxy Türü:",
@@ -65,7 +62,7 @@ class ProxyBrowserApp:
                 "install_anim_dot": "Kütüphane indiriliyor"
             },
             "en": {
-                "app_title": "Proxy Browser",
+                "app_title": "Proxy Browser (Made By Shigeru)",
                 "proxy_settings": "Proxy Settings",
                 "proxy_address": "Proxy Address (IP:Port):",
                 "proxy_type": "Proxy Type:",
